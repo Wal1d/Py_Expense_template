@@ -1,8 +1,18 @@
 from PyInquirer import prompt
+from prompt_toolkit.validation import Validator, ValidationError
+from user import load_users
+import regex
 import csv
 import json
 
-from user import load_users
+
+class IntergerValidator(Validator):
+    def validate(self, document):
+        ok = regex.match('^[\d]+$', document.text)
+        if not ok:
+            raise ValidationError(message = 'Please enter a valid number', cursor_position = len(document.text))
+
+
 
 def get_user_options(answers):
     options = load_users()
@@ -20,6 +30,8 @@ expense_questions = [
         "type":"input",
         "name":"amount",
         "message":"New Expense - Amount: ",
+        'validate': IntergerValidator
+
     },
     {
         "type":"input",
@@ -45,7 +57,6 @@ expense_questions = [
         'name': 'allspenders',
         "choices": get_users_choices,
     },
-
 ]
 
 
@@ -65,8 +76,7 @@ def append_to_json(_dict, path):
 def new_expense(*args):
     infos = prompt(expense_questions)
     # Writing the informations on external file might be a good idea ¯\_(ツ)_/¯
-    print(infos['allspenders'])
-    amountOwned = [{}]
+
     print("Expense Added !")
     append_to_json(infos, 'expense_report.csv')
     # with open('expense_report.csv', 'a') as f:
