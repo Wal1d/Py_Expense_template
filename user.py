@@ -19,8 +19,12 @@ def add_user():
     print(load_users())
     return True
 
-
+USERS = None
 def load_users():
+    global USERS
+    if USERS is not None:
+        return USERS
     with open('users.csv') as csvfile:
-        users = csv.reader(csvfile)
-        return [row[0] for row in users]
+        uload = csv.reader(csvfile)
+        USERS = [row[0] for row in uload]
+        return USERS
