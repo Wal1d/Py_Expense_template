@@ -57,6 +57,12 @@ expense_questions = [
         'name': 'allspenders',
         "choices": get_users_choices,
     },
+    {
+        "type":"list",
+        "name":"main_options",
+        "message":"Expense Tracker v0.1",
+        "choices": ["Split Expenses Properly", "Main menu"]
+    }
 ]
 
 
@@ -70,24 +76,20 @@ def append_to_json(_dict, path):
             f.truncate()                          
             f.write(' , '.encode())               
             f.write(json.dumps(_dict).encode())   
-            f.write(']'.encode())                  
+            f.write(']'.encode())
+                
 
 
 def new_expense(*args):
     infos = prompt(expense_questions)
     # Writing the informations on external file might be a good idea ¯\_(ツ)_/¯
 
+    if (infos['main_options']) == "Split Expenses Properly":
+        split_expenses(infos)
+        
+
     print("Expense Added !")
     append_to_json(infos, 'expense_report.csv')
-    # with open('expense_report.csv', 'a') as f:
-    #     # w = csv.DictWriter(f, infos.keys())
-    #     # w.writerow(infos)
-    #     # feeds = json.load(f)
-    #     # json.dump(infos, feeds)
-    #     f.write(json.dumps(infos))
-    #     f.write(",")
-    #     f.close()
-
 
     return True
 
@@ -114,4 +116,23 @@ def showStatus(*args):
             if not dsts.keys():
                 print('nothing', end=' ')
             print()
-    return True
+    return owned
+
+
+
+
+
+
+def split_expenses(expenses):
+    split_questions = []
+    for i in expenses['allspenders']:
+        split_questions.append({
+        "type":"input",
+        "name":i,
+        "message":"Splitting - Pourcentage for {}: (pourcentage left : 100%)".format(i),
+        'validate': IntergerValidator
+    })
+
+
+    infos = prompt(split_questions)
+    print(infos)
