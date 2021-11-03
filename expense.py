@@ -86,7 +86,6 @@ def new_expense(*args):
 
     if (infos['main_options']) == "Split Expenses Properly":
         split_expenses(infos)
-        
 
     print("Expense Added !")
     append_to_json(infos, 'expense_report.csv')
@@ -132,7 +131,13 @@ def split_expenses(expenses):
         "message":"Splitting - Pourcentage for {}: (pourcentage left : 100%)".format(i),
         'validate': IntergerValidator
     })
-
-
+    
     infos = prompt(split_questions)
-    print(infos)
+    
+    newPrices = {}
+    for userO in expenses['allspenders']:
+        newPrices[userO] = (int(infos[userO]) * int(expenses['amount'])) / 100
+
+    expenses['allspenders'] = newPrices
+    print (newPrices)
+    return expenses
